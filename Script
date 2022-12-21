@@ -1,0 +1,252 @@
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2022.2.621/styles/kendo.common.min.css" />
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2022.2.621/styles/kendo.blueopal.min.css" />
+<script src="https://kendo.cdn.telerik.com/2022.2.621/js/kendo.all.min.js"></script>
+
+
+<div class="col s12">
+
+<!-- This the editor for a 2014 version of the kendo editor. -->
+
+
+										<div class="demo-section k-content">
+
+											<ul class="fieldlist">
+
+												<li class="culture">
+
+													
+													<%-- Switch --%>
+													  <div class="switch">
+														<label>
+														  RichText Editor
+														  <input id="editSelect" type="checkbox">
+														  <span class="lever"></span>
+														  Code Editor
+														</label>
+													  </div>
+													<div class="rteEditor">
+														<span style="display: none;">
+														<%--<RTE:Editor runat="server" ID="Editor1RTE" ContentCss="../CSS/richtext.css" Width="100%" Height="800px"/>--%></span>
+														<textarea style="display: none;" id="aceeditor" runat="server"></textarea>
+														<textarea style="display: none;" id="keditorp" runat="server"></textarea>
+														<div class="">
+															<h5>Content:</h5>
+
+															<textarea style="" id="keditor" runat="server"></textarea>
+														</div>
+													</div>
+													
+													<div class="container codeEditor" style="">
+														<div class="panel panel-default">
+															<div class="panel-heading">
+																 <h3 class="panel-title">Editor</h3>
+															</div>
+															<div class="panel-body">
+																<div id="editor" runat="server">
+
+
+																</div>
+															</div>
+														</div>
+														<div class="text-center"></div>
+													</div>
+													<!--<textarea id="editor1" runat="server" rows="10" cols="30" style="height:440px" aria-label="editor">
+
+
+
+													</textarea>-->
+
+												</li>
+
+											</ul>
+
+										</div>
+
+									</div>
+                  
+  <!-- JSP Script for the 2014 editor -->
+  
+  <script>
+		  var isCodeEditor = false;
+		  $(".codeEditor").hide();
+		  $("#editSelect").click(function(){
+			 	if($(this). prop("checked") == true){
+					isCodeEditor = true;
+					$( ".rteEditor" ).fadeOut( 300, function() {
+						
+						$( ".codeEditor" ).fadeIn( 300, function() {
+							
+						});
+						
+					});
+					
+					
+				} else {
+					isCodeEditor = false;
+					$( ".codeEditor" ).fadeOut( 300, function() {
+						
+						$( ".rteEditor" ).fadeIn( 300, function() {
+							
+						});
+						
+					});
+					
+				}
+		  });
+		  
+		  
+		  //var deditor = ace.edit("");
+		  var editor = ace.edit("MainContent_editor");
+	 	  editor.setTheme("ace/theme/monokai");
+		  editor.getSession().setMode("ace/mode/html");
+		  editor.getSession().setUseWrapMode(true);
+		  
+		  editor.getSession().setUseWorker(false);
+		  function updateContent()
+		  {
+			  console.log("test");
+			  var keditor = $("#MainContent_keditor").data("kendoEditor");
+				//alert(keditor.value());
+			  if(isCodeEditor == true){
+				  
+				  $("#MainContent_aceeditor").val(editor.getValue());
+
+			  } else {
+				  //var keditor = $("#keditor").data("kendoEditor");
+				  //alert(keditor.value());
+				  $("#MainContent_keditorp").val(keditor.value());
+			  }
+			  //$("#MainContent_aceeditor").val(editor.getValue());
+		  }
+	  </script>
+	<script>
+		
+                function onExecute(e) {
+                    console.log("command :: " + e.name);
+					console.log(e);
+					if(e.name == "viewhtml"){
+						console.log("here");
+						var editor = ace.edit("MainContent_editor");
+	 	  				editor.setTheme("ace/theme/monokai");
+		  				editor.getSession().setMode("ace/mode/html");
+						 $('.k-editor-textarea').each(function() {
+							 console.log("test");
+							var textarea = $(this);
+							var mode = textarea.data('editor');
+							var editDiv = $('<div>', {
+							  position: 'absolute',
+							  width: textarea.width(),
+							  height: textarea.height(),
+							  'class': textarea.attr('class')
+							}).insertBefore(textarea);
+							textarea.css('display', 'none');
+							var editor = ace.edit(editDiv[0]);
+							editor.renderer.setShowGutter(textarea.data('gutter'));
+							editor.getSession().setValue(textarea.val());
+							editor.getSession().setMode("ace/mode/" + mode);
+							editor.setTheme("ace/theme/idle_fingers");
+
+							// copy back to textarea on form submit...
+							/*textarea.closest('form').submit(function() {
+							  textarea.val(editor.getSession().getValue());
+							})*/
+  						});
+					}
+                }
+				function sanitizeHtml(html) {
+					//var temp = $("<div></div>").html(html);
+					//temp.find("object").remove();
+					return html || "\ufeff";
+				  }
+                $(document).ready(function() {
+                    // create Editor from textarea HTML element with default set of tools
+                    $("#MainContent_keditor").kendoEditor({
+						stylesheets: [
+							"../CSS/richtext.css"
+						],
+						deserialization: {
+						  custom: function(html) {
+							return sanitizeHtml(html);
+						  }
+						},
+						serialization: {
+    						semantic: false
+						},
+                        tools: [
+							"bold",
+							"italic",
+							"underline",
+							"strikethrough",
+							"justifyLeft",
+							"justifyCenter",
+							"justifyRight",
+							"justifyFull",
+							"insertUnorderedList",
+							"insertOrderedList",
+							"indent",
+							"outdent",
+							"createLink",
+							"unlink",
+							"insertImage",
+							"insertFile",
+							"subscript",
+							"superscript",
+							"tableWizard",
+							"createTable",
+							"addRowAbove",
+							"addRowBelow",
+							"addColumnLeft",
+							"addColumnRight",
+							"deleteRow",
+							"deleteColumn",
+							"viewHtml",
+							"formatting",
+							"cleanFormatting",
+							"fontName",
+							"fontSize",
+							"foreColor",
+							"backColor",
+							"print",
+                        ],
+                        fileBrowser: {
+                            messages: {
+                                dropFilesHere: "Drop files here"
+                            },
+                            transport: {
+                                read: "/mvc/FileBrowser/Read/",
+                                destroy: {
+                                    url: "/mvc/FileBrowser/Destroy/",
+                                    type: "POST"
+                                },
+                                create: {
+                                    url: "/mvc/FileBrowser/Create/",
+                                    type: "POST"
+                                },
+                                uploadUrl: "/mvc/FileBrowser/Upload/",
+                                fileUrl: "/mvc/FileBrowser//DFile?fileName={0}"
+                            }
+                        },
+                        imageBrowser: {
+    						fileTypes: ".png,.gif,.jpg,.jpeg,.txt,.pdf",
+                           messages: {
+                            dropFilesHere: "Drop files here"
+                           },
+                           transport: {
+									read: "/mvc/ImageBrowser/Read/",
+									destroy: {
+									  url: "/mvc/ImageBrowser/Destroy/",
+									  type: "POST"
+									},
+									create: {
+									  url: "/mvc/ImageBrowser/Create/",
+									  type: "POST"
+									},
+									thumbnailUrl: "/mvc/ImageBrowser/Thumbnail",
+									uploadUrl: "/mvc/ImageBrowser/Upload/",
+									imageUrl: "/mvc/ImageBrowser/Image?path={0}"
+								},
+                        }
+                    });
+                });
+    </script>
+                  
